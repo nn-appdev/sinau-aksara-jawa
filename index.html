@@ -441,8 +441,8 @@ h1{font-size:1.7em}h2{font-size:1.3em}h3{font-size:1.05em}
     <div class="card col">
       <h2>Referensi dan sumber</h2>
       <div class="muted">Isi sumber belum dibaca oleh aplikasi. Nomor halaman, kutipan, dan nama pemeriksa tidak diisi sampai guru memverifikasinya.</div>
-      <div class="tblwrap"><table class="tbl"><thead><tr><th>ID</th><th>Judul</th><th>Penulis/lembaga</th><th>URL</th><th>Verifikasi</th></tr></thead><tbody>
-        <sc-for list="{{sourceRows}}" as="s"><tr><td>{{s.id}}</td><td>{{s.judul}}</td><td>{{s.penulis}}</td><td style="word-break:break-all">{{s.url}}</td><td><span class="tag draft">{{s.status}}</span></td></tr></sc-for>
+      <div class="tblwrap"><table class="tbl"><thead><tr><th>ID</th><th>Judul</th><th>Penulis/lembaga</th><th>Tahun/edisi</th><th>URL</th><th>Halaman/bagian</th><th>Catatan</th><th>Verifikasi</th></tr></thead><tbody>
+        <sc-for list="{{sourceRows}}" as="s"><tr><td>{{s.id}}</td><td>{{s.judul}}</td><td>{{s.penulis}}</td><td>{{s.tahun}}</td><td style="word-break:break-all">{{s.url}}</td><td>{{s.bagian}}</td><td>{{s.catatan}}</td><td><span class="tag draft">{{s.status}}</span></td></tr></sc-for>
       </tbody></table></div>
     </div>
     <div class="card col">
@@ -753,7 +753,7 @@ const ITEMS = {
   angka: [0,1,2,3,4,5,6,7,8,9].map(d => ({g:String.fromCodePoint(0xA9D0 + d), n:String(d), f:'angka Jawa'})),
   tandabaca: [{g:U('A9C8'),n:'pada lingsa',f:'seperti koma'},{g:U('A9C9'),n:'pada lungsi',f:'seperti titik'},{g:U('A9C1'),n:'rerenggan kiri',f:'pembuka'},{g:U('A9C2'),n:'rerenggan kanan',f:'penutup'}]
 };
-const REF = 'S-01 Wawaton Sriwedari; S-02 Pedoman Penulisan Aksara Jawa (Darusuprapta dkk.); S-03 Gramedia Literasi; S-04 Aksara Nusantara; S-05 Juknis FTBI';
+const REF = 'S-01 Wawaton Sriwedari (sastra.org, hanya bagian yang membahasnya); S-02 Pedoman Penulisan Aksara Jawa (Darusuprapta dkk.); S-03 Gramedia Literasi; S-04 Aksara Nusantara; S-05 Juknis FTBI';
 function seedLessons() {
   return [
     {id:'carakan',kat:'Aksara legena/carakan',judul:'Aksara legena (carakan)',tujuan:'Mengenali 20 aksara dasar dan urutannya.',penjelasan:'Aksara legena terdiri dari 20 aksara yang disusun dalam empat baris: ha na ca ra ka, da ta sa wa la, pa dha ja ya nya, ma ga ba tha nga. Setiap aksara membawa bunyi vokal a.',items:ITEMS.carakan,contoh:['hanacaraka','sapu','mata'],latih:'hanacaraka',ref:REF},
@@ -761,32 +761,57 @@ function seedLessons() {
     {id:'sandhangan-swara',kat:'Sandhangan swara',judul:'Sandhangan swara',tujuan:'Mengenali tanda pengubah vokal.',penjelasan:'Sandhangan swara mengubah bunyi vokal aksara: wulu (i), pepet (ê), suku (u), taling (é/è), dan taling tarung (o). Aksara ha dipakai di sini hanya sebagai pembawa tanda.',items:ITEMS.sandhanganSwara,contoh:['sapu','kali','kébo'],latih:'sapu',ref:REF},
     {id:'panyigeg',kat:'Sandhangan panyigeg wanda',judul:'Sandhangan panyigeg wanda',tujuan:'Mengenali tanda penutup suku kata.',penjelasan:'Panyigeg wanda menutup suku kata: layar (r), cecak (ng), wignyan (h), dan pangkon untuk konsonan lain di akhir kata. Panyangga (m) tercantum sebagai informasi Unicode; pemakaiannya perlu verifikasi guru.',items:ITEMS.panyigeg,contoh:['sing','sampun','wah'],latih:'sampun',ref:REF},
     {id:'wyanjana',kat:'Sandhangan wyanjana',judul:'Sandhangan wyanjana',tujuan:'Mengenali tanda gugus konsonan.',penjelasan:'Sandhangan wyanjana terdiri atas pengkal (y), cakra (r), dan cakra keret (rê). Penentuan apakah suatu gugus ditulis dengan sandhangan atau pasangan perlu diperiksa guru.',items:ITEMS.wyanjana,contoh:['pra','putra'],latih:'putra',ref:REF},
-    {id:'swara',kat:'Aksara swara',judul:'Aksara swara',tujuan:'Mengenali aksara untuk vokal mandiri.',penjelasan:'Aksara swara dipakai terutama untuk vokal awal pada kata serapan atau nama. Ketentuan rinci (kapan memakai swara dan kapan memakai ha + sandhangan) berbeda antarpedoman: perlu verifikasi guru.',items:ITEMS.swara,contoh:[],latih:'',ref:REF},
-    {id:'murda',kat:'Aksara murda',judul:'Aksara murda',tujuan:'Mengenali bentuk aksara murda.',penjelasan:'Aksara murda dipakai untuk kehormatan, misalnya nama orang atau tempat. Daftar dan aturan pemakaiannya perlu verifikasi guru sebelum dipakai untuk penilaian.',items:ITEMS.murda,contoh:[],latih:'',ref:REF},
-    {id:'rekan',kat:'Aksara rekan',judul:'Aksara rekan',tujuan:'Mengenali aksara untuk bunyi serapan.',penjelasan:'Aksara rekan ditulis dengan cecak telu (tanda tiga titik) pada aksara dasar. Daftar lengkap dan aturannya perlu verifikasi guru.',items:ITEMS.rekan,contoh:[],latih:'',ref:REF},
-    {id:'angka',kat:'Angka Jawa',judul:'Angka Jawa',tujuan:'Menulis dan membaca angka 0 sampai 9.',penjelasan:'Angka Jawa memiliki bentuk tersendiri dari nol sampai sembilan. Penggunaan tanda pada pangkat untuk mengapit angka perlu verifikasi guru.',items:ITEMS.angka,contoh:[],latih:'',ref:REF},
+    {id:'swara',kat:'Aksara swara',judul:'Aksara swara',tujuan:'Mengenali aksara untuk vokal mandiri.',penjelasan:'Menurut ringkasan Wawaton Sriwedari (bagian XI), aksara swara a, i, e, u, o dipakai untuk kata asing yang perlu ditonjolkan, tidak menjadi pasangan, dan diberi pangku bila mengikuti suku tertutup. Pada kata asli, vokal awal ditulis dengan ha + sandhangan. Ringkasan ini dibuat dari halaman web dan perlu diverifikasi guru terhadap naskah asli; pedoman lain dapat berbeda.',items:ITEMS.swara,contoh:[],latih:'',ref:REF},
+    {id:'murda',kat:'Aksara murda',judul:'Aksara murda',tujuan:'Mengenali bentuk aksara murda.',penjelasan:'Menurut ringkasan Wawaton Sriwedari (bagian X), aksara murda hanya dipakai untuk penghormatan (tataprunggu); penulisan lain tidak memakai murda. Halaman sumber juga menyebut tidak ada murda untuk rê dan i. Pemakaian murda untuk nama orang atau tempat berbeda antarpedoman, jadi perlu verifikasi guru sebelum dipakai untuk penilaian.',items:ITEMS.murda,contoh:[],latih:'',ref:REF},
+    {id:'rekan',kat:'Aksara rekan',judul:'Aksara rekan',tujuan:'Mengenali aksara untuk bunyi serapan.',penjelasan:'Aksara rekan ditulis dengan cecak telu (tanda tiga titik) pada aksara dasar. Menurut ringkasan Wawaton Sriwedari (bagian XII), aksara rekan dipakai untuk kata asing bila perlu ditonjolkan. Daftar lengkap dan aturannya perlu verifikasi guru.',items:ITEMS.rekan,contoh:[],latih:'',ref:REF},
+    {id:'angka',kat:'Angka Jawa',judul:'Angka Jawa',tujuan:'Menulis dan membaca angka 0 sampai 9.',penjelasan:'Angka Jawa memiliki bentuk tersendiri dari nol sampai sembilan. Menurut ringkasan Wawaton Sriwedari (bagian XIII dan XVII), angka Jawa hanya untuk urutan bab dan penulisan waktu, dan angka 2 tidak dipakai untuk menyingkat kata ulang. Penggunaan tanda pada pangkat untuk mengapit angka perlu verifikasi guru.',items:ITEMS.angka,contoh:[],latih:'',ref:REF},
     {id:'tandabaca',kat:'Tanda baca',judul:'Tanda baca',tujuan:'Mengenali tanda baca dasar.',penjelasan:'Pada lingsa setara koma dan pada lungsi setara titik. Tanda baca lain perlu verifikasi guru.',items:ITEMS.tandabaca,contoh:[],latih:'',ref:REF},
-    {id:'paugeran',kat:'Paugeran penulisan kata',judul:'Paugeran penulisan kata',tujuan:'Memahami bahwa aturan penulisan bergantung pada profil pedoman.',penjelasan:'Pemisahan kata (dengan atau tanpa spasi), penulisan kata serapan, dan ejaan berbeda antara Wawaton Sriwedari, pedoman Darusuprapta/KBJ, dan juknis FTBI. Guru perlu menentukan profil yang dipakai dan memverifikasi aturannya pada tab Paugeran sebelum dipakai sebagai kunci penilaian.',items:[],contoh:['Aku sinau nulis aksara Jawa.'],latih:'Aku sinau nulis aksara Jawa.',ref:REF},
-    {id:'kasus',kat:'Kasus penulisan khusus',judul:'Kasus penulisan yang memerlukan perhatian khusus',tujuan:'Mengenali kasus ambigu.',penjelasan:'Contoh kasus: vokal e yang bisa é, è, atau ê; vokal beruntun (kuat atau kuwat); gugus konsonan (pengkal/cakra atau suku kata terpisah); kata serapan. Seluruh kasus ini ditandai “Perlu verifikasi guru” dan tidak dipakai sebagai kunci otomatis.',items:[],contoh:['kuat','kuwat'],latih:'kuwat',ref:REF}
-  ].map(l => Object.assign({status:'Perlu verifikasi guru', builtin:true}, l));
+    {id:'paugeran',kat:'Paugeran penulisan kata',judul:'Paugeran penulisan kata',tujuan:'Memahami bahwa aturan penulisan bergantung pada profil pedoman.',penjelasan:'Wawaton Sriwedari mengatur, antara lain, aksara ganda pada kata dasar, awalan, akhiran, dwipurwa, dan dwilingga (aturan R-S01 sampai R-S12 pada Panel Guru › Paugeran, berstatus draf). Pemisahan kata, penulisan kata serapan, dan ejaan dapat berbeda antara Wawaton Sriwedari, pedoman Darusuprapta/KBJ, dan juknis FTBI. Guru perlu menentukan profil yang dipakai dan memverifikasi aturannya sebelum dipakai sebagai kunci penilaian.',items:[],contoh:['Aku sinau nulis aksara Jawa.'],latih:'Aku sinau nulis aksara Jawa.',ref:REF},
+    {id:'kasus',kat:'Kasus penulisan khusus',judul:'Kasus penulisan yang memerlukan perhatian khusus',tujuan:'Mengenali kasus ambigu.',penjelasan:'Contoh kasus: vokal e yang bisa é, è, atau ê; vokal beruntun (kuat atau kuwat); gugus konsonan (pengkal/cakra atau suku kata terpisah); kata serapan; dan akhiran vokal pada kata berakhir konsonan, yang dirangkap pada pedoman Darusuprapta (kancinglah) tetapi tidak pada Wawaton Sriwedari (jarane, bukan jaranne). Mesin konverter tidak merangkap konsonan. Seluruh kasus ini ditandai “Perlu verifikasi guru” dan tidak dipakai sebagai kunci otomatis.',items:[],contoh:['kuat','kuwat'],latih:'kuwat',ref:REF}
+  ].map(l => Object.assign({status:'Perlu verifikasi guru', builtin:true, rev:2}, l));
 }
 function seedSources() {
   return [
-    {id:'S-01',judul:'Wawaton Sriwedari',penulis:'—',url:'',status:'Belum diverifikasi'},
-    {id:'S-02',judul:'Pedoman Penulisan Aksara Jawa',penulis:'Darusuprapta dkk. (1996, edisi perlu dipastikan)',url:'https://luk.staff.ugm.ac.id/bahasa/Jawa/1996-PedomanPenulisanAksaraJawa.pdf',status:'Belum diverifikasi'},
+    {id:'S-01',judul:'Wawaton Sriwedari (Sastra Sriwedari)',penulis:'Keputusan Komisi Kesusasteraan, Kongres Sriwedari; dihimpun Yayasan Sastra Lestari (sastra.org)',tahun:'Keputusan kongres 1922; terbit 1926',url:'https://www.sastra.org/bahasa-dan-budaya/pengetahuan-bahasa/2520-sastra-sriwedari',bagian:'Bagian I sampai XVII (kata dasar, kata jadian, dwipurwa, dwilingga, murda, swara, rekan, angka). Tidak memuat bagian khusus aksara legena, pasangan, sandhangan, atau tanda baca.',catatan:'Menurut keterangan halaman sastra.org, naskah asal dimuat di Pusaka Jawi (Java Instituut), Mei 1926, hlm. 65-70. Ringkasan aturan di aplikasi dibuat dari halaman web, belum dicocokkan dengan naskah asli.',status:'Belum diverifikasi'},
+    {id:'S-02',judul:'Pedoman Penulisan Aksara Jawa',penulis:'Darusuprapta (Tim Penyusun); Yogyakarta: Yayasan Pustaka Nusatama bersama Dinas P dan K Provinsi DIY',tahun:'Metadata archive.org: tanggal 1994, tahun 2002; edisi tidak disebutkan',url:'https://archive.org/details/pedoman-penulisan-aksara-jawa-2002',bagian:'Bab I Pemakaian Aksara; II Pemakaian Sandangan; III Penanda Gugus Konsonan; IV Penulisan Kata; V Pemakaian Tanda Baca; VI Penulisan Unsur Serapan; VII Daftar Pustaka.',catatan:'Isi dibaca dari teks OCR (_djvu.txt) yang banyak rusak; nomor halaman dengan tanda ~ adalah perkiraan. Bagian Penulisan Unsur Serapan dan Daftar Pustaka tidak terbaca. Metadata mencatat xii + 49 hlm., tidak cocok dengan daftar isi yang terbaca (sampai hlm. 61): periksa pada naskah. Lisensi item: CC BY-NC-ND 4.0.',status:'Belum diverifikasi'},
     {id:'S-03',judul:'Panduan Tulisan Aksara Jawa Lengkap',penulis:'Gramedia Literasi',url:'https://www.gramedia.com/literasi/panduan-tulisan-aksara-jawa-lengkap/',status:'Belum diverifikasi'},
     {id:'S-04',judul:'Aksara di Nusantara',penulis:'—',url:'https://aksaradinusantara.com/',status:'Belum diverifikasi'},
+    {id:'S-06',judul:'Pedoman Penulisan Aksara Jawa (salinan PDF di situs UGM)',penulis:'Darusuprapta dkk.',tahun:'1996 (sesuai nama berkas; belum diperiksa)',url:'https://luk.staff.ugm.ac.id/bahasa/Jawa/1996-PedomanPenulisanAksaraJawa.pdf',bagian:'',catatan:'Belum dibaca. Bandingkan dengan S-02 untuk memastikan edisi dan isi sama.',status:'Belum diverifikasi'},
     {id:'S-05',judul:'Petunjuk teknis FTBI (tahun dan wilayah perlu diisi guru)',penulis:'Penyelenggara FTBI',url:'',status:'Belum diverifikasi'}
   ];
 }
 function seedRules() {
-  const r = (id, topik, p, ct, src) => ({id:id, topik:topik, pernyataan:p, contoh:ct, sumber:src, bagian:'Belum diverifikasi', profil:'Belum ditentukan', status:'draft', versi:1, pemeriksa:'', tgl:''});
+  const r = (id, topik, p, ct, src, bag, prof) => ({id:id, topik:topik, pernyataan:p, contoh:ct, sumber:src, bagian:bag || 'Belum diverifikasi', profil:prof || 'Belum ditentukan', status:'draft', versi:1, pemeriksa:'', tgl:''});
+  const D = (id, topik, p, ct, bag) => r(id, topik, p + ' (Ringkasan dari teks OCR archive.org; halaman dan kutipan belum dicek pada naskah.)', ct, 'S-02', bag, 'Pedoman Darusuprapta');
+  const W = (id, topik, p, ct, bag) => r(id, topik, p + ' (Ringkasan dari halaman sastra.org; belum dicocokkan dengan naskah asli.)', ct, 'S-01', bag, 'Wawaton Sriwedari');
   return [
-    r('R-001','Aksara legena','Aksara legena berjumlah 20: ha na ca ra ka da ta sa wa la pa dha ja ya nya ma ga ba tha nga.','ha, na, ca','S-02'),
-    r('R-002','Sandhangan swara','Wulu melambangkan bunyi i, suku u, pepet ê, taling é/è, dan taling tarung o.','wulu = i','S-02'),
-    r('R-003','Panyigeg wanda','Layar melambangkan r, cecak ng, dan wignyan h pada akhir suku kata; konsonan lain ditutup pangkon.','sing, wah','S-02'),
-    r('R-004','Pasangan','Konsonan yang diikuti konsonan tanpa vokal ditulis dengan pasangan.','aksara','S-02'),
-    r('R-005','Pemisahan kata','Konvensi spasi antarkata bergantung profil pedoman yang dipakai.','','S-05')
+    r('R-001','Aksara legena','Aksara legena berjumlah 20: ha na ca ra ka da ta sa wa la pa dha ja ya nya ma ga ba tha nga.','ha, na, ca','S-02','Bab I.A (~hlm. 5)','Pedoman Darusuprapta'),
+    r('R-002','Sandhangan swara','Wulu melambangkan bunyi i, suku u, pepet ê, taling é/è, dan taling tarung o.','wulu = i','S-02','Bab II.A (~hlm. 19-23)','Pedoman Darusuprapta'),
+    r('R-003','Panyigeg wanda','Layar melambangkan r, cecak ng, dan wignyan h pada akhir suku kata; konsonan lain ditutup pangkon.','sing, wah','S-02','Bab II.B (~hlm. 24-26)','Pedoman Darusuprapta'),
+    r('R-004','Pasangan','Konsonan yang diikuti konsonan tanpa vokal ditulis dengan pasangan.','aksara','S-02','Bab I.A (~hlm. 9-10)','Pedoman Darusuprapta'),
+    r('R-005','Pemisahan kata','Konvensi spasi antarkata bergantung profil pedoman yang dipakai.','','S-05'),
+    D('R-D01','Penempatan pasangan','Pasangan selain ha, sa, dan pa ditulis di bawah aksara konsonan akhir suku kata di depannya.','bawang; abang','Bab I.A (~hlm. 9-10)'),
+    D('R-D02','Aksara murda','Aksara murda tidak dipakai sebagai penutup suku kata; dipakai untuk gelar, nama diri, nama geografi, dan lembaga.','Nabi Nuh; Kabupaten Kudus','Bab I.B (~hlm. 11-12)'),
+    D('R-D03','Aksara swara','Aksara swara dipakai untuk menuliskan vokal yang menjadi suku kata, terutama dari bahasa asing.','Alquran; Eropa; organisasi','Bab I.C (~hlm. 13-15)'),
+    D('R-D04','Aksara rekan','Aksara rekan dipakai untuk konsonan kata asing yang masih dipertahankan seperti aslinya.','khatib; zikir; vitamin','Bab I.D (~hlm. 16-17)'),
+    D('R-D05','Penanda gugus konsonan','Cakra (r), keret (r + e pepet), pengkal (y), panjingan wa (w), dan panjingan la (l) menandai gugus konsonan.','prajurit; kyai; kwaci; slamet','Bab III (hlm. 29-32)'),
+    D('R-D06','Kata dasar','Kata dasar ditulis tanpa merangkap aksara, kecuali yang aslinya memang rangkap.','Allah; banyu; prahara','Bab IV.A (hlm. 33)'),
+    D('R-D07','Kata turunan','Bila bentuk dasar berakhir konsonan lalu mendapat akhiran vokal, konsonan akhir bentuk dasar ditulis rangkap. Perhatian: tampak berbeda dengan R-S06 (Sriwedari); guru perlu menentukan profil pedoman.','kancing: kancinglah','Bab IV.B (hlm. 36)'),
+    D('R-D08','Singkatan dan akronim','Singkatan yang lazim ditulis dengan aksara Jawa adalah nama orang, gelar, jabatan, dan yang membudaya di keraton; akronim ditulis dengan aksara Jawa bila lafal dan wujudnya seperti kata Jawa yang wajar.','G.B.P.H. Puger; Pongestu','Bab IV.C (hlm. 43-44)'),
+    D('R-D09','Angka dan lambang bilangan','Angka dipakai untuk menyatakan lambang bilangan atau nomor, termasuk ukuran, satuan waktu, dan nilai uang.','Dawane 36 sentimeter','Bab IV.D (hlm. 44-45)'),
+    D('R-D10','Tanda baca','Lingsa dipakai di akhir bagian kalimat; lungsi di akhir kalimat; pangkat sebelum rangkaian atau pemerian; adeg-adeg di awal alinea.','','Bab V (hlm. 49-54)'),
+    W('R-S01','Aksara ganda pada kata dasar','Kata dasar tidak mengulang aksara, misalnya tuna, bukan tunna. Ada penyimpangan, misalnya tanya yang ditulis dengan bunyi ganda.','tuna; tanya','I.1'),
+    W('R-S02','Pepet dan layar','Suku kata yang bukan terakhir pada kata asli hanya diberi layar, bukan pepet; kata asing dikecualikan.','drêkuku','I.4'),
+    W('R-S03','Pasangan c dan j','Pasangan c dan j tidak boleh berada di bawah n; diganti dengan ny.','wanyci','I.5'),
+    W('R-S04','Taling tarung','Bunyi o ditulis dengan taling tarung, bukan dengan suku.','donya','I.7'),
+    W('R-S05','Awalan pa-','Awalan pa- pada kata berawal n tidak menggandakan n.','panêmbah (bukan pannêmbah)','II.2'),
+    W('R-S06','Akhiran -e','Akhiran -e tidak menggandakan n pada kata berakhiran n.','jarane (bukan jaranne)','IV.3'),
+    W('R-S07','Dwipurwa','Perulangan suku awal ditulis mengikuti bentuk dasarnya.','rigên: ririgên','V'),
+    W('R-S08','Aksara murda','Aksara murda hanya untuk penghormatan (tataprunggu); penulisan lain tidak memakai murda.','','X'),
+    W('R-S09','Aksara swara','Aksara swara a, i, e, u, o dipakai untuk kata asing yang perlu ditonjolkan, tidak menjadi pasangan, dan diberi pangku bila mengikuti suku tertutup.','wulan April','XI'),
+    W('R-S10','Aksara rekan','Aksara rekan dipakai untuk kata asing bila perlu ditonjolkan.','','XII'),
+    W('R-S11','Angka Jawa','Angka Jawa hanya untuk urutan bab dan penulisan waktu; angka Romawi untuk urutan tahun; aksara Latin untuk nomor urut.','','XIII-XIV'),
+    W('R-S12','Angka 2','Angka 2 tidak dipakai untuk menyingkat kata ulang; tulis alun-alun, bukan alun2.','alun-alun','XVII')
   ];
 }
 function seedBank() {
@@ -819,6 +844,9 @@ function migrate(d) {
   const s = seedAll();
   if (!d || typeof d !== 'object') return s;
   Object.keys(s).forEach(k => { if (d[k] === undefined) d[k] = s[k]; });
+  if (Array.isArray(d.sources)) seedSources().forEach(x => { const i = d.sources.findIndex(y => y.id === x.id); if (i < 0) d.sources.push(x); else if (d.sources[i].status === 'Belum diverifikasi' && d.sources[i].catatan !== x.catatan && !d.sources[i].pemeriksa) d.sources[i] = x; });
+  if (Array.isArray(d.rules)) seedRules().forEach(x => { if (!d.rules.some(y => y.id === x.id)) d.rules.push(x); });
+  if (Array.isArray(d.lessons)) seedLessons().forEach(x => { const i = d.lessons.findIndex(y => y.id === x.id); if (i < 0) d.lessons.push(x); else if (d.lessons[i].builtin && !(d.lessons[i].rev >= x.rev)) d.lessons[i] = x; });
   d.schemaVersion = SCHEMA;
   return d;
 }
@@ -1121,7 +1149,7 @@ class Component extends DCLogic {
       del:() => this.confirm('Hapus siswa "' + x.nama + '"? Riwayat tulisan tidak ikut terhapus.', () => this.up({students:s.students.filter(y => y.id !== x.id)}))}));
     const classList = s.classes.map(c => ({nama:c, del:() => this.confirm('Hapus kelas "' + c + '"?', () => this.up({classes:s.classes.filter(y => y !== c)}))}));
     const lessonEditChips = s.lessons.map(l => chip(l.judul, s.editLesson === l.id, () => this.setState({editLesson:l.id, f:Object.assign({}, f, {ljudul:l.judul, ltujuan:l.tujuan, ljelas:l.penjelasan})})));
-    const sourceRows = s.sources.map(x => ({id:x.id, judul:x.judul, penulis:x.penulis, url:x.url || '(belum diisi)', status:x.status}));
+    const sourceRows = s.sources.map(x => ({id:x.id, judul:x.judul, penulis:x.penulis, tahun:x.tahun || '(belum diisi)', url:x.url || '(belum diisi)', bagian:x.bagian || '(belum diverifikasi)', catatan:x.catatan || '', status:x.status}));
     const ruleRows = s.rules.map(r => {
       const setSt = (st) => {
         if (st === 'verified' && !String(f.pemeriksa).trim()) { this.setState({ruleErr:'Isi nama pemeriksa sebelum menandai aturan sebagai verified.'}); return; }
