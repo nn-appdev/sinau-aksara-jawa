@@ -138,7 +138,7 @@ h1{font-size:1.7em}h2{font-size:1.3em}h3{font-size:1.05em}
 <sc-if value="{{pg.materi}}" hint-placeholder-val="{{false}}">
 <div class="col">
   <h1>Sinau — Materi dan Paugeran</h1>
-  <div class="warn">Seluruh materi bawaan adalah draf awal. Sumber pedoman belum dibaca dan diverifikasi oleh pemeriksa, sehingga nomor halaman dan kutipan sengaja dikosongkan. Materi berlabel “Perlu verifikasi guru” tidak dipakai sebagai kunci penilaian otomatis.</div>
+  <div class="warn">Seluruh materi bawaan adalah draf awal. Sumber pedoman baru dibaca sebagian lewat ringkasan dan teks OCR, dan belum diverifikasi oleh pemeriksa; nomor halaman bertanda ~ hanya perkiraan. Materi berlabel “Perlu verifikasi guru” tidak dipakai sebagai kunci penilaian otomatis.</div>
   <div class="row">
     <sc-for list="{{lessonChips}}" as="c" hint-placeholder-count="12">
       <button class="{{c.cls}}" onClick="{{c.pick}}">{{c.label}}</button>
@@ -153,12 +153,14 @@ h1{font-size:1.7em}h2{font-size:1.3em}h3{font-size:1.05em}
     <div style="white-space:pre-line">{{lesson.penjelasan}}</div>
     <sc-if value="{{lesson.hasItems}}" hint-placeholder-val="{{true}}">
       <h3>Bentuk, nama, dan fungsi</h3>
-      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr))">
+      <div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">
         <sc-for list="{{lesson.items}}" as="it" hint-placeholder-count="6">
           <div style="border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center">
             <div class="aks glyph" style="font-size:{{aksSize}}px">{{it.g}}</div>
             <div style="font-weight:700">{{it.n}}</div>
             <div class="muted">{{it.f}}</div>
+            <sc-for list="{{it.exs}}" as="e"><div style="margin-top:6px;border-top:1px dashed var(--line);padding-top:4px"><span class="aks" style="font-size:{{aksSize}}px">{{e.aks}}</span> <b>[{{e.tag}}]</b><div class="muted" style="font-size:.8em">{{e.latin}}</div></div></sc-for>
+            <sc-if value="{{it.noEx}}" hint-placeholder-val="{{false}}"><div class="muted" style="margin-top:6px;font-size:.8em">Contoh kata belum diisi; guru dapat menambahkan.</div></sc-if>
           </div>
         </sc-for>
       </div>
@@ -741,13 +743,33 @@ const KEY = 'sag.v1';
 const uid = p => p + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const G = (...hs) => hs.map(U).join('');
+const PAS_EX = {
+  t:[['waktu','pasangan ta']], s:[['aksara','pasangan sa']], p:[['sampun','pasangan pa']],   w:[['swara','pasangan wa']], l:[['slamêt','pasangan la']], m:[['bakmi','pasangan ma']], dh:[['pandhita','pasangan dha']],
+  j:[['panjang','pasangan ja']], th:[['bantheng','pasangan tha']]
+};
 const ITEMS = {
   carakan: CARAKAN.map(k => ({g:U(CONS[k]), n:CNAME[k], f:'aksara nglegena'})),
-  pasangan: CARAKAN.map(k => ({g:U(CONS.k) + U('A9C0') + U(CONS[k]), n:'pasangan ' + CNAME[k], f:'ditulis bersama aksara mati di depannya'})),
+  pasangan: CARAKAN.map(k => ({g:U(CONS.k) + U('A9C0') + U(CONS[k]), n:'pasangan ' + CNAME[k], f:'ditulis bersama aksara mati di depannya', ex:PAS_EX[k] || []})),
   swara: [{g:G('A984'),n:'a (swara)',f:'vokal awal'},{g:G('A986'),n:'i (swara)',f:'vokal awal'},{g:G('A988'),n:'u (swara)',f:'vokal awal'},{g:G('A98C'),n:'e (swara)',f:'vokal awal'},{g:G('A98E'),n:'o (swara)',f:'vokal awal'}],
-  sandhanganSwara: [{g:G('A9B2','A9B6'),n:'wulu',f:'bunyi i'},{g:G('A9B2','A9BC'),n:'pepet',f:'bunyi ê'},{g:G('A9B2','A9B8'),n:'suku',f:'bunyi u'},{g:G('A9B2','A9BA'),n:'taling',f:'bunyi é atau è'},{g:G('A9B2','A9BA','A9B4'),n:'taling tarung',f:'bunyi o'}],
-  panyigeg: [{g:G('A9B2','A982'),n:'layar',f:'akhir suku kata r'},{g:G('A9B2','A981'),n:'cecak',f:'akhir suku kata ng'},{g:G('A9B2','A983'),n:'wignyan',f:'akhir suku kata h'},{g:G('A9B2','A9C0'),n:'pangkon',f:'mematikan vokal / penutup konsonan'},{g:G('A9B2','A980'),n:'panyangga',f:'akhir suku kata m'}],
-  wyanjana: [{g:G('A9B2','A9BE'),n:'pengkal',f:'gugus dengan y'},{g:G('A9B2','A9BF'),n:'cakra',f:'gugus dengan r'},{g:G('A9B2','A9BD'),n:'cakra keret',f:'gugus dengan rê'}],
+  sandhanganSwara: [
+    {g:G('A98F','A9B6'),n:'wulu',f:'bunyi i (contoh pada aksara ka)',ex:[['kali','wulu'],['siji','wulu']]},
+    {g:G('A9A5','A9BC'),n:'pepet',f:'bunyi ê (contoh pada aksara pa)',ex:[['sêgêr','pepet'],['ênêm','pepet']]},
+    {g:G('A9A0','A9B8'),n:'suku',f:'bunyi u (contoh pada aksara ta)',ex:[['buku','suku'],['tuku','suku']]},
+    {g:G('A9A7','A9BA'),n:'taling',f:'bunyi é atau è (contoh pada aksara ba)',ex:[['kébo','taling'],['jéjér','taling']]},
+    {g:G('A98F','A9BA','A9B4'),n:'taling tarung',f:'bunyi o (contoh pada aksara ka)',ex:[['toko','taling tarung'],['loro','taling tarung']]}
+  ],
+  panyigeg: [
+    {g:G('A9A5','A982'),n:'layar',f:'akhir suku kata r (contoh pada aksara pa)',ex:[['pagêr','layar'],['warta','layar']]},
+    {g:G('A9AE','A981'),n:'cecak',f:'akhir suku kata ng (contoh pada aksara wa)',ex:[['walang','cecak'],['jangkah','cecak']]},
+    {g:G('A9A7','A983'),n:'wignyan',f:'akhir suku kata h (contoh pada aksara ba)',ex:[['gagah','wignyan'],['cahya','wignyan']]},
+    {g:G('A98F','A9C0'),n:'pangkon',f:'mematikan vokal aksara (contoh pada aksara ka)',ex:[['tangan','pangkon'],['wêdhus','pangkon']]},
+    {g:G('A98F','A980'),n:'panyangga',f:'akhir suku kata m (contoh pada aksara ka)',ex:[]}
+  ],
+  wyanjana: [
+    {g:G('A98F','A9BE'),n:'pengkal',f:'gugus dengan y (contoh pada aksara ka)',ex:[['kyai','pengkal']]},
+    {g:G('A98F','A9BF'),n:'cakra',f:'gugus dengan r (contoh pada aksara ka)',ex:[['prajurit','cakra'],['putra','cakra']]},
+    {g:G('A98F','A9BD'),n:'cakra keret',f:'gugus dengan rê (contoh pada aksara ka)',ex:[]}
+  ],
   murda: [['A99F','na murda'],['A991','ka murda'],['A9A1','ta murda'],['A9AF','sa murda'],['A9A6','pa murda'],['A998','nya murda'],['A993','ga murda'],['A9A8','ba murda']].map(x => ({g:U(x[0]), n:x[1], f:'perlu verifikasi guru'})),
   rekan: [{g:G('A98F','A9B3'),n:'kha',f:'huruf rekan (serapan)'},{g:G('A9A5','A9B3'),n:'fa/va',f:'huruf rekan (serapan)'},{g:G('A997','A9B3'),n:'za',f:'huruf rekan (serapan)'}],
   angka: [0,1,2,3,4,5,6,7,8,9].map(d => ({g:String.fromCodePoint(0xA9D0 + d), n:String(d), f:'angka Jawa'})),
@@ -757,10 +779,10 @@ const REF = 'S-01 Wawaton Sriwedari (sastra.org, hanya bagian yang membahasnya);
 function seedLessons() {
   return [
     {id:'carakan',kat:'Aksara legena/carakan',judul:'Aksara legena (carakan)',tujuan:'Mengenali 20 aksara dasar dan urutannya.',penjelasan:'Aksara legena terdiri dari 20 aksara yang disusun dalam empat baris: ha na ca ra ka, da ta sa wa la, pa dha ja ya nya, ma ga ba tha nga. Setiap aksara membawa bunyi vokal a.',items:ITEMS.carakan,contoh:['hanacaraka','sapu','mata'],latih:'hanacaraka',ref:REF},
-    {id:'pasangan',kat:'Pasangan',judul:'Pasangan',tujuan:'Memahami fungsi pasangan untuk menghubungkan konsonan.',penjelasan:'Pasangan dipakai agar dua konsonan dapat ditulis berurutan tanpa vokal di antaranya. Bentuk di bawah ditampilkan oleh font lewat pangkon + aksara, bukan gambar. Aturan penempatan pasangan tertentu (misalnya pasangan yang tidak boleh dipakai pada posisi tertentu) perlu verifikasi guru.',items:ITEMS.pasangan,contoh:['aksara','sampun'],latih:'aksara',ref:REF},
-    {id:'sandhangan-swara',kat:'Sandhangan swara',judul:'Sandhangan swara',tujuan:'Mengenali tanda pengubah vokal.',penjelasan:'Sandhangan swara mengubah bunyi vokal aksara: wulu (i), pepet (ê), suku (u), taling (é/è), dan taling tarung (o). Aksara ha dipakai di sini hanya sebagai pembawa tanda.',items:ITEMS.sandhanganSwara,contoh:['sapu','kali','kébo'],latih:'sapu',ref:REF},
-    {id:'panyigeg',kat:'Sandhangan panyigeg wanda',judul:'Sandhangan panyigeg wanda',tujuan:'Mengenali tanda penutup suku kata.',penjelasan:'Panyigeg wanda menutup suku kata: layar (r), cecak (ng), wignyan (h), dan pangkon untuk konsonan lain di akhir kata. Panyangga (m) tercantum sebagai informasi Unicode; pemakaiannya perlu verifikasi guru.',items:ITEMS.panyigeg,contoh:['sing','sampun','wah'],latih:'sampun',ref:REF},
-    {id:'wyanjana',kat:'Sandhangan wyanjana',judul:'Sandhangan wyanjana',tujuan:'Mengenali tanda gugus konsonan.',penjelasan:'Sandhangan wyanjana terdiri atas pengkal (y), cakra (r), dan cakra keret (rê). Penentuan apakah suatu gugus ditulis dengan sandhangan atau pasangan perlu diperiksa guru.',items:ITEMS.wyanjana,contoh:['pra','putra'],latih:'putra',ref:REF},
+    {id:'pasangan',kat:'Pasangan',judul:'Pasangan',tujuan:'Memahami fungsi pasangan untuk menghubungkan konsonan.',penjelasan:'Pasangan dipakai agar dua konsonan dapat ditulis berurutan tanpa vokal di antaranya. Bentuk pada kartu ditampilkan oleh font lewat pangkon + aksara (contoh pada aksara ka), bukan gambar. Contoh kata dibuat oleh mesin transliterasi dasar dan perlu diperiksa guru; pasangan yang belum punya contoh dapat dilengkapi guru. Aturan penempatan pasangan tertentu (misalnya pasangan yang tidak boleh dipakai pada posisi tertentu) perlu verifikasi guru.',items:ITEMS.pasangan,contoh:[],latih:'aksara',ref:REF},
+    {id:'sandhangan-swara',kat:'Sandhangan swara',judul:'Sandhangan swara',tujuan:'Mengenali tanda pengubah vokal.',penjelasan:'Sandhangan swara mengubah bunyi vokal aksara: wulu (i), pepet (ê), suku (u), taling (é/è), dan taling tarung (o). Contoh pada kartu memakai aksara selain ha agar mudah dibaca. Contoh kata dibuat oleh mesin transliterasi dasar dan perlu diperiksa guru.',items:ITEMS.sandhanganSwara,contoh:[],latih:'sapu',ref:REF},
+    {id:'panyigeg',kat:'Sandhangan panyigeg wanda',judul:'Sandhangan panyigeg wanda',tujuan:'Mengenali tanda penutup suku kata.',penjelasan:'Panyigeg wanda menutup suku kata: layar (r), cecak (ng), wignyan (h), dan pangkon untuk konsonan lain di akhir kata. Panyangga (m) tercantum sebagai informasi Unicode; pemakaiannya perlu verifikasi guru.',items:ITEMS.panyigeg,contoh:[],latih:'sampun',ref:REF},
+    {id:'wyanjana',kat:'Sandhangan wyanjana',judul:'Sandhangan wyanjana',tujuan:'Mengenali tanda gugus konsonan.',penjelasan:'Sandhangan wyanjana terdiri atas pengkal (y), cakra (r), dan cakra keret (rê). Penentuan apakah suatu gugus ditulis dengan sandhangan atau pasangan perlu diperiksa guru.',items:ITEMS.wyanjana,contoh:[],latih:'putra',ref:REF},
     {id:'swara',kat:'Aksara swara',judul:'Aksara swara',tujuan:'Mengenali aksara untuk vokal mandiri.',penjelasan:'Menurut ringkasan Wawaton Sriwedari (bagian XI), aksara swara a, i, e, u, o dipakai untuk kata asing yang perlu ditonjolkan, tidak menjadi pasangan, dan diberi pangku bila mengikuti suku tertutup. Pada kata asli, vokal awal ditulis dengan ha + sandhangan. Ringkasan ini dibuat dari halaman web dan perlu diverifikasi guru terhadap naskah asli; pedoman lain dapat berbeda.',items:ITEMS.swara,contoh:[],latih:'',ref:REF},
     {id:'murda',kat:'Aksara murda',judul:'Aksara murda',tujuan:'Mengenali bentuk aksara murda.',penjelasan:'Menurut ringkasan Wawaton Sriwedari (bagian X), aksara murda hanya dipakai untuk penghormatan (tataprunggu); penulisan lain tidak memakai murda. Halaman sumber juga menyebut tidak ada murda untuk rê dan i. Pemakaian murda untuk nama orang atau tempat berbeda antarpedoman, jadi perlu verifikasi guru sebelum dipakai untuk penilaian.',items:ITEMS.murda,contoh:[],latih:'',ref:REF},
     {id:'rekan',kat:'Aksara rekan',judul:'Aksara rekan',tujuan:'Mengenali aksara untuk bunyi serapan.',penjelasan:'Aksara rekan ditulis dengan cecak telu (tanda tiga titik) pada aksara dasar. Menurut ringkasan Wawaton Sriwedari (bagian XII), aksara rekan dipakai untuk kata asing bila perlu ditonjolkan. Daftar lengkap dan aturannya perlu verifikasi guru.',items:ITEMS.rekan,contoh:[],latih:'',ref:REF},
@@ -768,7 +790,7 @@ function seedLessons() {
     {id:'tandabaca',kat:'Tanda baca',judul:'Tanda baca',tujuan:'Mengenali tanda baca dasar.',penjelasan:'Pada lingsa setara koma dan pada lungsi setara titik. Tanda baca lain perlu verifikasi guru.',items:ITEMS.tandabaca,contoh:[],latih:'',ref:REF},
     {id:'paugeran',kat:'Paugeran penulisan kata',judul:'Paugeran penulisan kata',tujuan:'Memahami bahwa aturan penulisan bergantung pada profil pedoman.',penjelasan:'Wawaton Sriwedari mengatur, antara lain, aksara ganda pada kata dasar, awalan, akhiran, dwipurwa, dan dwilingga (aturan R-S01 sampai R-S12 pada Panel Guru › Paugeran, berstatus draf). Pemisahan kata, penulisan kata serapan, dan ejaan dapat berbeda antara Wawaton Sriwedari, pedoman Darusuprapta/KBJ, dan juknis FTBI. Guru perlu menentukan profil yang dipakai dan memverifikasi aturannya sebelum dipakai sebagai kunci penilaian.',items:[],contoh:['Aku sinau nulis aksara Jawa.'],latih:'Aku sinau nulis aksara Jawa.',ref:REF},
     {id:'kasus',kat:'Kasus penulisan khusus',judul:'Kasus penulisan yang memerlukan perhatian khusus',tujuan:'Mengenali kasus ambigu.',penjelasan:'Contoh kasus: vokal e yang bisa é, è, atau ê; vokal beruntun (kuat atau kuwat); gugus konsonan (pengkal/cakra atau suku kata terpisah); kata serapan; dan akhiran vokal pada kata berakhir konsonan, yang dirangkap pada pedoman Darusuprapta (kancinglah) tetapi tidak pada Wawaton Sriwedari (jarane, bukan jaranne). Mesin konverter tidak merangkap konsonan. Seluruh kasus ini ditandai “Perlu verifikasi guru” dan tidak dipakai sebagai kunci otomatis.',items:[],contoh:['kuat','kuwat'],latih:'kuwat',ref:REF}
-  ].map(l => Object.assign({status:'Perlu verifikasi guru', builtin:true, rev:2}, l));
+  ].map(l => Object.assign({status:'Perlu verifikasi guru', builtin:true, rev:3}, l));
 }
 function seedSources() {
   return [
@@ -1083,7 +1105,7 @@ class Component extends DCLogic {
     const L = s.lessons.find(l => l.id === s.lessonId) || s.lessons[0];
     const cvt = x => convert(x, {swara:false}).out;
     const lesson = {
-      judul:L.judul, tujuan:L.tujuan, penjelasan:L.penjelasan, status:L.status, ref:L.ref, items:L.items || [], hasItems:(L.items || []).length > 0,
+      judul:L.judul, tujuan:L.tujuan, penjelasan:L.penjelasan, status:L.status, ref:L.ref, items:(L.items || []).map(it => Object.assign({}, it, {exs:(it.ex || []).map(e => ({aks:cvt(e[0]), latin:e[0], tag:e[1]})), hasEx:(it.ex || []).length > 0, noEx:!(it.ex && it.ex.length) && it.ex !== undefined})), hasItems:(L.items || []).length > 0,
       contoh:(L.contoh || []).map(c => ({latin:c, aks:cvt(c)})), hasContoh:(L.contoh || []).length > 0,
       mastery:mlabel[mOf(L.id)],
       cycle:() => { const order = ['belum', 'belajar', 'paham']; const n = order[(order.indexOf(mOf(L.id)) + 1) % 3]; this.up({mastery:Object.assign({}, mastery, {[L.id]:n})}); },
